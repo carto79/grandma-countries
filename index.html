@@ -111,6 +111,35 @@
     }
     </script>
 
+    <!-- STRUCTURED DATA: VideoObject (for YouTube embed indexing) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": "Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad",
+        "description": "The Warren and Taitt families celebrate the 100th birthday of Faustina Warren Thomas, honored by the Trinidad and Tobago National Centenarian Programme on Carnival Sunday, February 2026.",
+        "thumbnailUrl": "https://yourusername.github.io/grandma-countries/og-image.png",
+        "uploadDate": "",
+        "contentUrl": "https://www.youtube.com/watch?v=p1_o9LC24gE",
+        "embedUrl": "https://www.youtube.com/embed/p1_o9LC24gE",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Jtaitt Writes",
+            "url": "https://jtaittw.substack.com"
+        },
+        "about": {
+            "@type": "Person",
+            "name": "Faustina Warren Thomas",
+            "birthDate": "1926-02",
+            "birthPlace": {
+                "@type": "Place",
+                "name": "Trinidad and Tobago"
+            },
+            "description": "Trinidadian centenarian born in February 1926, honored by the National Centenarian Programme of Trinidad and Tobago in 2026."
+        }
+    }
+    </script>
+
     <!-- FONTS & SCRIPTS -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -517,6 +546,29 @@
             <div class="decade-bars" id="decade-bars"></div>
         </div>
 
+        <!-- The Woman Behind the Map -->
+        <section class="grandma-section" style="margin-top:28px;padding:28px;background:rgba(240,212,138,0.04);border-radius:12px;border:1px solid rgba(240,212,138,0.12);position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(240,212,138,0.3),transparent);"></div>
+            <h2 style="font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(18px,2.5vw,22px);color:#f0d48a;margin-bottom:6px;letter-spacing:0.01em;">The Woman Behind the Map</h2>
+            <p style="font-size:14px;color:#7a9ab5;line-height:1.7;margin-bottom:20px;max-width:720px;">
+                This map is inspired by <strong style="color:#e8c36a;">Faustina Warren Thomas</strong>, born in February 1926 in Trinidad and Tobago. In her lifetime, she witnessed her own country gain independence from Britain in 1962, and watched as more than half the nations on Earth were born. In February 2026, the Warren and Taitt families celebrated her 100th birthday — honored by the Trinidad and Tobago <em>National Centenarian Programme</em> on Carnival Sunday.
+            </p>
+            <div style="position:relative;width:100%;max-width:680px;padding-bottom:56.25%;height:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+                <iframe
+                    src="https://www.youtube.com/embed/p1_o9LC24gE"
+                    title="Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;">
+                </iframe>
+            </div>
+            <p style="font-size:12px;color:#5a8099;margin-top:12px;font-style:italic;">
+                Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad
+            </p>
+        </section>
+
         <!-- SEO: Crawlable prose for search engines and AI answer engines -->
         <footer style="margin-top:40px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:#5a8099;text-align:center;">
             <p>Created by <a href="https://jtaittw.substack.com" style="color:#e8993d;" rel="author">Jason Taitt</a> for <strong>Jtaitt Writes</strong>.</p>
@@ -530,6 +582,7 @@
                 <p>This interactive map visualizes the 130 countries that became independent after February 1926. In one grandmother's lifetime, more than half the nations on Earth gained sovereignty — from Iraq and Saudi Arabia in 1932, through the massive African decolonization wave of 1960, the Caribbean independence era that included Trinidad and Tobago in 1962, the post-Soviet states of 1991, to South Sudan in 2011.</p>
                 <p>The 1960s saw the most new nations, with over 30 countries gaining independence in a single decade — sometimes called the "Year of Africa." The visualization uses warm amber-to-gold colors to show the timeline, with darker tones representing earlier independence dates and brighter golds for more recent ones.</p>
                 <p>Key milestones include: Indonesia (1945), India and Pakistan (1947), Ghana (1957, first sub-Saharan African nation), Trinidad and Tobago (1962), Bangladesh (1971), the Baltic States' re-independence (1990), the Soviet dissolution creating 15 new nations (1991), and South Sudan (2011, the newest country in the world).</p>
+                <p>This project is dedicated to Faustina Warren Thomas, a Trinidadian centenarian born in February 1926 and honored by the National Centenarian Programme of Trinidad and Tobago in 2026. In her lifetime, she witnessed her own country gain independence and watched as more than half the nations on Earth were born.</p>
                 <p>Enable JavaScript to explore the interactive map with hover tooltips showing each country's independence year.</p>
             </section>
         </noscript>
