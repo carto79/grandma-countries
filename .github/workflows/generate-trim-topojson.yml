@@ -1,0 +1,35 @@
+name: Generate trimmed TopoJSON
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - feature/mobile-modal-trim-topojson
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run generator
+        env:
+          CI: true
+        run: |
+          node ./scripts/generate-trimmed-topojson.js
+
+      - name: Commit trimmed TopoJSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/countries-110m-trimmed.json || true
+          git commit -m "chore: add generated trimmed TopoJSON" || echo "no changes to commit"
+          git push origin HEAD:feature/mobile-modal-trim-topojson || echo "push failed"
