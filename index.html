@@ -1,925 +1,803 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe6">
+<title>One Lifetime · Map & Decades | Jtaitt Writes</title>
+<meta name="description" content="An interactive map of the 130 countries founded in one grandmother's lifetime — plus a decade-by-decade breakdown.">
 
-    <!-- PRIMARY SEO -->
-    <title>How Many Countries Have Been Founded Since 1926? Interactive Map | Jtaitt Writes</title>
-    <meta name="description" content="130 countries have become independent since 1926 — more than half the nations on Earth were founded in one grandmother's lifetime. Explore an interactive map of decolonization from Trinidad and Tobago to South Sudan.">
-    <meta name="author" content="Jason Taitt">
-    <meta name="keywords" content="countries independence timeline, decolonization map, interactive world map, countries founded after 1926, post-colonial independence, Trinidad and Tobago independence, African independence movement, data visualization, world history timeline">
-    <link rel="canonical" href="https://yourusername.github.io/grandma-countries/"><!-- UPDATE: your actual GitHub Pages URL -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
-    <!-- OPEN GRAPH (Facebook, LinkedIn, Substack, iMessage previews) -->
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="130 Countries Became Independent After My Grandma Was Born">
-    <meta property="og:description" content="An interactive map showing every country that became independent since February 1926 — more than half the nations on Earth gained sovereignty in one grandmother's lifetime.">
-    <meta property="og:url" content="https://yourusername.github.io/grandma-countries/"><!-- UPDATE: your actual GitHub Pages URL -->
-    <meta property="og:image" content="https://yourusername.github.io/grandma-countries/og-image.png"><!-- UPDATE: create a 1200x630 screenshot -->
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Interactive world map showing 130 countries that became independent since 1926, colored in warm amber tones against a dark blue background">
-    <meta property="og:site_name" content="Jtaitt Writes">
-    <meta property="og:locale" content="en_US">
-    <meta property="article:author" content="Jason Taitt">
-    <meta property="article:published_time" content=""><!-- UPDATE: publication date in ISO 8601 format, e.g. 2026-04-15T12:00:00Z -->
-    <meta property="article:section" content="Data Visualization">
-    <meta property="article:tag" content="world history">
-    <meta property="article:tag" content="decolonization">
-    <meta property="article:tag" content="data visualization">
-    <meta property="article:tag" content="interactive map">
+<style>
+  :root {
+    --paper: #f5efe6;
+    --paper-sub: #eee5d5;
+    --ink: #1a1613;
+    --ink-soft: #4a3f36;
+    --ink-muted: #8a7a6a;
+    --rule: rgba(26, 22, 19, 0.12);
+    --plate: #0f1b26;
+    --plate-2: #0a1219;
+    --plate-ink: #e8dfd0;
+    --plate-muted: #7a8c9c;
+    --accent: #c97a2b;
+    --accent-2: #d9a441;
+    --accent-3: #8a4b1a;
+    --accent-soft: rgba(201, 122, 43, 0.12);
+    --maxw: 1180px;
+    --narrow: 680px;
+    --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: multiply;
+    opacity: 0.55;
+  }
+  img, svg { max-width: 100%; display: block; }
 
-    <!-- TWITTER / X CARD -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="130 Countries Became Independent After My Grandma Was Born">
-    <meta name="twitter:description" content="More than half the nations on Earth became independent in one grandmother's lifetime. Explore the interactive map.">
-    <meta name="twitter:image" content="https://yourusername.github.io/grandma-countries/og-image.png"><!-- UPDATE: same OG image -->
-    <meta name="twitter:image:alt" content="Interactive world map showing 130 countries that became independent since 1926">
-    <meta name="twitter:creator" content="@jtaittw"><!-- UPDATE: your X/Twitter handle -->
+  /* Intro heading (short) */
+  .intro-head {
+    max-width: var(--narrow);
+    margin: 0 auto;
+    padding: 44px 20px 8px;
+    text-align: left;
+  }
+  .intro-head .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-3);
+    margin-bottom: 14px;
+  }
+  .intro-head h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(30px, 5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+    margin-bottom: 14px;
+  }
+  .intro-head h1 em { font-style: italic; color: var(--accent-3); }
+  .intro-head p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
 
-    <!-- STRUCTURED DATA: Article + Dataset (AEO / AI answer engine optimization) -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "How Many Countries Have Been Founded Since 1926? 130 Nations in One Lifetime",
-        "description": "An interactive data visualization mapping every country that became independent since February 1926 — exploring decolonization, the Cold War, and the reshaping of the world map in one lifetime.",
-        "author": {
-            "@type": "Person",
-            "name": "Jason Taitt",
-            "url": "https://jtaittw.substack.com"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Jtaitt Writes",
-            "url": "https://jtaittw.substack.com"
-        },
-        "datePublished": "",
-        "dateModified": "",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https://yourusername.github.io/grandma-countries/"
-        },
-        "image": "https://yourusername.github.io/grandma-countries/og-image.png",
-        "keywords": ["decolonization", "world history", "independence timeline", "interactive map", "data visualization", "post-colonial nations", "Trinidad and Tobago"],
-        "about": [
-            {
-                "@type": "Thing",
-                "name": "Decolonization",
-                "sameAs": "https://en.wikipedia.org/wiki/Decolonization"
-            },
-            {
-                "@type": "Thing",
-                "name": "National independence",
-                "sameAs": "https://en.wikipedia.org/wiki/Independence"
-            }
-        ],
-        "isPartOf": {
-            "@type": "Blog",
-            "name": "Jtaitt Writes",
-            "url": "https://jtaittw.substack.com"
-        }
-    }
-    </script>
+  /* Map plate */
+  .plate-section {
+    margin: 40px 0 0;
+    background: linear-gradient(180deg, var(--plate) 0%, var(--plate-2) 100%);
+    color: var(--plate-ink);
+    position: relative;
+    padding: 44px 0 52px;
+    overflow: hidden;
+  }
+  .plate-section::before, .plate-section::after {
+    content: '';
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(217,164,65,0.35), transparent);
+  }
+  .plate-section::before { top: 0; }
+  .plate-section::after { bottom: 0; }
 
-    <!-- STRUCTURED DATA: Dataset (helps AI engines cite the data itself) -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Dataset",
-        "name": "Countries That Gained Independence Since 1926",
-        "description": "A curated dataset of 130 countries that became independent after February 1926, including year of independence and ISO country codes. Covers decolonization in Africa, Asia, the Caribbean, the Pacific, and post-Soviet states.",
-        "creator": {
-            "@type": "Person",
-            "name": "Jason Taitt"
-        },
-        "license": "https://creativecommons.org/licenses/by/4.0/",
-        "temporalCoverage": "1926/2011",
-        "spatialCoverage": {
-            "@type": "Place",
-            "name": "World"
-        },
-        "variableMeasured": [
-            {
-                "@type": "PropertyValue",
-                "name": "Year of Independence",
-                "description": "The year each country gained sovereignty or was formally established"
-            }
-        ],
-        "keywords": ["independence dates", "country founding years", "decolonization timeline", "post-1926 nations"]
-    }
-    </script>
+  .plate-head {
+    max-width: var(--narrow);
+    margin: 0 auto 28px;
+    padding: 0 20px;
+    text-align: center;
+  }
+  .plate-head .chap {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 14px;
+  }
+  .plate-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--plate-ink);
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+  .plate-head h2 em { font-style: italic; color: var(--accent-2); }
+  .plate-head p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(15px, 1.8vw, 17px);
+    color: var(--plate-muted);
+    max-width: 520px;
+    margin: 0 auto;
+    text-wrap: pretty;
+  }
 
-    <!-- STRUCTURED DATA: VideoObject (for YouTube embed indexing) -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "VideoObject",
-        "name": "Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad",
-        "description": "The Warren and Taitt families celebrate the 100th birthday of Faustina Warren Thomas, honored by the Trinidad and Tobago National Centenarian Programme on Carnival Sunday, February 2026.",
-        "thumbnailUrl": "https://yourusername.github.io/grandma-countries/og-image.png",
-        "uploadDate": "",
-        "contentUrl": "https://www.youtube.com/watch?v=p1_o9LC24gE",
-        "embedUrl": "https://www.youtube.com/embed/p1_o9LC24gE",
-        "publisher": {
-            "@type": "Organization",
-            "name": "Jtaitt Writes",
-            "url": "https://jtaittw.substack.com"
-        },
-        "about": {
-            "@type": "Person",
-            "name": "Faustina Warren Thomas",
-            "birthDate": "1926-02",
-            "birthPlace": {
-                "@type": "Place",
-                "name": "Trinidad and Tobago"
-            },
-            "description": "Trinidadian centenarian born in February 1926, honored by the National Centenarian Programme of Trinidad and Tobago in 2026."
-        }
-    }
-    </script>
+  .map-frame {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 12px;
+    position: relative;
+  }
+  .map-inner {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  #map { display: block; width: 100%; height: auto; }
+  .country {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 0.4;
+    cursor: pointer;
+    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+  }
+  .country:hover {
+    opacity: 0.82;
+    stroke: var(--accent-2);
+    stroke-width: 1.2;
+  }
+  .country.highlight-trinidad {
+    stroke: #fff;
+    stroke-width: 2;
+  }
+  .loading-msg {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--plate-muted);
+    font-size: 14px;
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+  }
+  .loading-msg .spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 1.5px solid rgba(217,164,65,0.25);
+    border-top-color: var(--accent-2);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-    <!-- FONTS & SCRIPTS -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .legend-rail {
+    max-width: var(--maxw);
+    margin: 26px auto 0;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 760px) {
+    .legend-rail { grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
+  }
+  .legend-scale {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--plate-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .gradient-bar {
+    height: 8px;
+    border-radius: 1px;
+    margin: 10px 0 8px;
+    background: linear-gradient(to right, #5c2a0e, #8b3a14, #b5541e, #d4752e, #e8993d, #f0be5a, #f5dc8a);
+  }
+  .gradient-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--plate-muted);
+    letter-spacing: 0.08em;
+  }
+  .legend-swatches {
+    display: flex; flex-wrap: wrap;
+    gap: 14px 22px;
+    font-size: 12px;
+    color: var(--plate-muted);
+  }
+  .legend-swatches .sw { display: inline-flex; align-items: center; gap: 8px; }
+  .legend-swatches .dot { width: 14px; height: 8px; border-radius: 1px; }
+  .dot-pre { background: #2a3a48; border: 1px solid rgba(255,255,255,0.12); }
+  .dot-trinidad { background: transparent; border: 1.5px solid #fff; }
 
-        body {
-            font-family: 'Source Sans 3', sans-serif;
-            background: #0b1d2c;
-            color: #e8eff4;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  /* Decades */
+  .decades {
+    max-width: var(--maxw);
+    margin: 56px auto 0;
+    padding: 0 20px;
+  }
+  .decades-head {
+    max-width: var(--narrow);
+    margin: 0 auto 32px;
+    text-align: left;
+  }
+  .decades-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(28px, 4.4vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+  .decades-head p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(16px, 2vw, 18px);
+    color: var(--ink-soft);
+    max-width: 520px;
+    text-wrap: pretty;
+  }
+  .decade-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .decade-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+    position: relative;
+  }
+  .decade-row:first-child { border-top: 1px solid var(--rule); }
+  @media (min-width: 640px) {
+    .decade-row { grid-template-columns: 120px 120px 1fr; gap: 28px; }
+  }
+  .decade-year {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(22px, 3vw, 28px);
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .decade-year small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .decade-visual { display: none; align-items: center; height: 100%; }
+  @media (min-width: 640px) { .decade-visual { display: flex; } }
+  .decade-bar {
+    height: 10px;
+    border-radius: 1px;
+    min-width: 4px;
+    transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 0;
+  }
+  .decade-body .count {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2.8vw, 26px);
+    font-weight: 500;
+    color: var(--accent-3);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .decade-body .examples {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .decade-body .examples .tt {
+    background: var(--accent-soft);
+    color: var(--accent-3);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
 
-        /* Subtle grain overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 9999;
-        }
+  /* Tooltip */
+  #tooltip {
+    position: absolute;
+    padding: 12px 14px;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 2px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    font-size: 13px;
+    max-width: 240px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    z-index: 1000;
+    border: 1px solid var(--rule);
+  }
+  .tt-country {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.15;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .tt-year {
+    font-family: var(--mono);
+    color: var(--accent-3);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+  .tt-detail {
+    margin-top: 6px;
+    color: var(--ink-muted);
+    font-size: 12px;
+    font-family: var(--serif);
+    font-style: italic;
+  }
+  .tt-pre {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 12px;
+  }
 
-        #container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 30px 24px 60px;
-        }
+  .mobile-info {
+    position: fixed;
+    left: 12px; right: 12px; bottom: 12px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+    z-index: 800;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transform: translateY(120%);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    font-size: 13px;
+  }
+  .mobile-info.on { transform: translateY(0); }
+  .mobile-info .close {
+    position: absolute;
+    top: 10px; right: 12px;
+    background: transparent; border: 0;
+    font-size: 20px; line-height: 1;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 4px;
+  }
+  @media (min-width: 760px) { .mobile-info { display: none; } }
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 12px;
-            position: relative;
-        }
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            font-size: clamp(24px, 4vw, 42px);
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            background: linear-gradient(135deg, #f0d48a 0%, #e8c36a 40%, #d4a853 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .header .date-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 5px 18px;
-            background: rgba(240, 212, 138, 0.1);
-            border: 1px solid rgba(240, 212, 138, 0.25);
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #f0d48a;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .subtitle {
-            text-align: center;
-            color: #7a9ab5;
-            margin: 14px 0 28px;
-            font-size: clamp(14px, 2vw, 17px);
-            font-weight: 300;
-            line-height: 1.5;
-        }
-        .subtitle strong {
-            color: #f0be5a;
-            font-weight: 600;
-        }
+  .footer {
+    max-width: var(--narrow);
+    margin: 40px auto 0;
+    padding: 20px 20px 40px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    line-height: 1.8;
+    border-top: 1px solid var(--rule);
+  }
+  .footer a { color: var(--accent-3); text-decoration: none; }
 
-        /* Map container */
-        .map-wrap {
-            position: relative;
-            background: linear-gradient(180deg, #132d42 0%, #0f2435 100%);
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow:
-                0 4px 30px rgba(0,0,0,0.5),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-            overflow: hidden;
-        }
-        .map-wrap::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(240,212,138,0.2), transparent);
-        }
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
 
-        #map {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
+  /* Grandma section */
+  .grandma {
+    max-width: var(--maxw);
+    margin: 64px auto 0;
+    padding: 0 20px;
+  }
+  .grandma-card {
+    background: var(--paper-sub);
+    border-radius: 2px;
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    border-top: 3px solid var(--accent);
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  @media (min-width: 760px) {
+    .grandma-card { padding: 48px 52px; }
+  }
+  .grandma-body h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 20px;
+    text-wrap: balance;
+  }
+  .grandma-body h2 em { font-style: italic; color: var(--accent-3); }
+  .grandma-body p {
+    font-family: var(--serif);
+    font-weight: 350;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    text-wrap: pretty;
+  }
+  .grandma-body strong { color: var(--ink); font-weight: 500; }
+  .video-wrap {
+    margin-top: 24px;
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--plate);
+    border: 1px solid var(--rule);
+  }
+  .video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+  .video-caption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-top: 10px;
+  }
 
-        .country {
-            stroke: rgba(255,255,255,0.15);
-            stroke-width: 0.4;
-            cursor: pointer;
-            transition: opacity 0.15s ease, stroke-width 0.15s ease;
-        }
-        .country:hover {
-            opacity: 0.85;
-            stroke: #f0d48a;
-            stroke-width: 1.2;
-        }
-        .country.highlight-trinidad {
-            stroke: #fff;
-            stroke-width: 2.5;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
-        }
-
-        /* Trinidad annotation */
-        .trinidad-annotation {
-            pointer-events: none;
-        }
-        .trinidad-annotation line {
-            stroke: #fff;
-            stroke-width: 1;
-            stroke-dasharray: 3 3;
-        }
-        .trinidad-annotation text {
-            fill: #fff;
-            font-family: 'Playfair Display', serif;
-            font-size: 11px;
-            font-style: italic;
-        }
-
-        /* Legend */
-        .legend-section {
-            margin-top: 28px;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 24px;
-            align-items: start;
-        }
-        @media (max-width: 800px) {
-            .legend-section {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .legend-bar {
-            padding: 22px 28px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .legend-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 14px;
-            color: #c8dae6;
-            letter-spacing: 0.02em;
-        }
-        .gradient-bar {
-            height: 14px;
-            border-radius: 7px;
-            margin-bottom: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-        .gradient-bar-inner {
-            height: 100%;
-            border-radius: 7px;
-            background: linear-gradient(to right,
-                #5c2a0e,
-                #8b3a14,
-                #b5541e,
-                #d4752e,
-                #e8993d,
-                #f0be5a,
-                #f5dc8a
-            );
-        }
-        .gradient-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #5a8099;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-        .legend-note {
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #5a8099;
-        }
-        .legend-note .swatch {
-            width: 18px;
-            height: 10px;
-            border-radius: 3px;
-            flex-shrink: 0;
-        }
-        .swatch-pre1926 { background: #2a3a48; border: 1px solid rgba(255,255,255,0.1); }
-        .swatch-trinidad { background: transparent; border: 2px solid #fff; }
-
-        /* Stats card */
-        .stats-card {
-            padding: 22px 24px;
-            background: rgba(240,212,138,0.04);
-            border-radius: 12px;
-            border: 1px solid rgba(240,212,138,0.12);
-        }
-        .stats-card .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .stats-card .stat-row:last-child { border-bottom: none; }
-        .stat-label {
-            font-size: 12px;
-            color: #7a9ab5;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-weight: 600;
-        }
-        .stat-value {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 20px;
-            color: #f0d48a;
-        }
-        .stat-value.small { font-size: 15px; }
-
-        /* Tooltip */
-        #tooltip {
-            position: absolute;
-            padding: 14px 18px;
-            background: rgba(8, 20, 30, 0.96);
-            color: #e8eff4;
-            border-radius: 10px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-            font-size: 13px;
-            max-width: 260px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-        .tt-country {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 4px;
-            color: #fff;
-        }
-        .tt-year {
-            color: #e8993d;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .tt-detail {
-            margin-top: 4px;
-            color: #7a9ab5;
-            font-size: 12px;
-        }
-        .tt-pre {
-            font-style: italic;
-            color: #5a8099;
-        }
-
-        /* Decade bar chart */
-        .decade-section {
-            margin-top: 28px;
-            padding: 22px 28px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .decade-bars {
-            display: flex;
-            align-items: flex-end;
-            gap: 6px;
-            height: 100px;
-            margin-top: 14px;
-        }
-        .decade-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        .decade-bar {
-            width: 100%;
-            border-radius: 4px 4px 0 0;
-            min-height: 2px;
-            transition: opacity 0.2s;
-        }
-        .decade-bar:hover { opacity: 0.8; }
-        .decade-label {
-            font-size: 10px;
-            color: #5a8099;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-        .decade-count {
-            font-size: 11px;
-            color: #e8c36a;
-            font-weight: 600;
-        }
-
-        /* Loading */
-        .loading-msg {
-            text-align: center;
-            padding: 80px 20px;
-            color: #5a8099;
-            font-size: 15px;
-        }
-        .loading-msg .spinner {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(90,128,153,0.3);
-            border-top-color: #e8993d;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 12px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Error state */
-        .error-msg {
-            text-align: center;
-            padding: 60px 20px;
-            color: #b56a6a;
-            font-size: 15px;
-        }
-    </style>
+  @media (max-width: 480px) {
+    .intro-head { padding-top: 32px; }
+    .plate-section { padding-top: 32px; padding-bottom: 40px; }
+    .decades { margin-top: 40px; }
+    .grandma { margin-top: 44px; }
+    .grandma-card { padding: 28px 22px; }
+  }
+</style>
 </head>
 <body>
-    <main>
-    <article>
-    <div id="container">
-        <header class="header">
-            <h1>Countries That Became Independent<br>After My Grandma Was Born</h1>
-            <div class="date-badge">February 1926</div>
-        </header>
-        <div class="subtitle">
-            <strong id="country-count">130</strong> countries have become independent in her lifetime — more than half the nations on Earth
-        </div>
 
-        <div class="map-wrap">
-            <div class="loading-msg" id="loading">
-                <div class="spinner"></div><br>
-                Loading world map…
-            </div>
-            <svg id="map" viewBox="0 0 1400 620" xmlns="http://www.w3.org/2000/svg" style="display:none;"></svg>
-        </div>
+<section class="intro-head">
+  <div class="eyebrow">One Lifetime · Interactive</div>
+  <h1>130 countries. One <em>lifetime.</em></h1>
+  <p>Every colored country on the map below gained independence after February 1926. Hover (or tap) any nation to see the year it was born.</p>
+</section>
 
-        <div class="legend-section">
-            <div class="legend-bar">
-                <div class="legend-title">Independence Timeline</div>
-                <div class="gradient-bar">
-                    <div class="gradient-bar-inner"></div>
-                </div>
-                <div class="gradient-labels">
-                    <span>1930s</span>
-                    <span>1950s</span>
-                    <span>1970s</span>
-                    <span>1990s</span>
-                    <span>2011</span>
-                </div>
-                <div class="legend-note">
-                    <span class="swatch swatch-pre1926"></span> Independent before 1926
-                </div>
-                <div class="legend-note">
-                    <span class="swatch swatch-trinidad"></span> Trinidad &amp; Tobago — Grandma's homeland
-                </div>
-            </div>
+<section class="plate-section">
+  <div class="plate-head">
+    <h2>Every <em>new</em> nation, colored by the year it was born.</h2>
+    <p>Darker ambers mark the earliest post-1926 independences. Bright golds mark the most recent. Grey countries were sovereign before.</p>
+  </div>
 
-            <div class="stats-card">
-                <div class="legend-title">By the Numbers</div>
-                <div class="stat-row">
-                    <span class="stat-label">Countries formed</span>
-                    <span class="stat-value" id="stat-count">—</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Peak decade</span>
-                    <span class="stat-value small" id="stat-peak">—</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Most recent</span>
-                    <span class="stat-value small" id="stat-recent">—</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="decade-section">
-            <div class="legend-title">Independence by Decade</div>
-            <div class="decade-bars" id="decade-bars"></div>
-        </div>
-
-        <!-- The Woman Behind the Map -->
-        <section class="grandma-section" style="margin-top:28px;padding:28px;background:rgba(240,212,138,0.04);border-radius:12px;border:1px solid rgba(240,212,138,0.12);position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(240,212,138,0.3),transparent);"></div>
-            <h2 style="font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(18px,2.5vw,22px);color:#f0d48a;margin-bottom:6px;letter-spacing:0.01em;">The Woman Behind the Map</h2>
-            <p style="font-size:14px;color:#7a9ab5;line-height:1.7;margin-bottom:20px;max-width:720px;">
-                This map is inspired by <strong style="color:#e8c36a;">Faustina Warren Thomas</strong>, born in February 1926 in Trinidad and Tobago. In her lifetime, she witnessed her own country gain independence from Britain in 1962, and watched as more than half the nations on Earth were born. In February 2026, the Warren and Taitt families celebrated her 100th birthday — honored by the Trinidad and Tobago <em>National Centenarian Programme</em> on Carnival Sunday.
-            </p>
-            <div style="position:relative;width:100%;max-width:680px;padding-bottom:56.25%;height:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
-                <iframe
-                    src="https://www.youtube.com/embed/p1_o9LC24gE"
-                    title="Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy"
-                    style="position:absolute;top:0;left:0;width:100%;height:100%;">
-                </iframe>
-            </div>
-            <p style="font-size:12px;color:#5a8099;margin-top:12px;font-style:italic;">
-                Celebrating 100 Years: Faustina Warren 100th Birthday Party in Trinidad
-            </p>
-        </section>
-
-        <!-- SEO: Crawlable prose for search engines and AI answer engines -->
-        <footer style="margin-top:40px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:#5a8099;text-align:center;">
-            <p>Created by <a href="https://jtaittw.substack.com" style="color:#e8993d;" rel="author">Jason Taitt</a> for <strong>Jtaitt Writes</strong>.</p>
-            <p style="margin-top:6px;">Data compiled from historical independence records. 130 countries have become independent since February 1926.</p>
-        </footer>
-
-        <!-- NOSCRIPT: Full text fallback so crawlers index the content even without JS -->
-        <noscript>
-            <section style="padding:20px;color:#ccc;">
-                <h2>Countries That Became Independent Since February 1926</h2>
-                <p>This interactive map visualizes the 130 countries that became independent after February 1926. In one grandmother's lifetime, more than half the nations on Earth gained sovereignty — from Iraq and Saudi Arabia in 1932, through the massive African decolonization wave of 1960, the Caribbean independence era that included Trinidad and Tobago in 1962, the post-Soviet states of 1991, to South Sudan in 2011.</p>
-                <p>The 1960s saw the most new nations, with over 30 countries gaining independence in a single decade — sometimes called the "Year of Africa." The visualization uses warm amber-to-gold colors to show the timeline, with darker tones representing earlier independence dates and brighter golds for more recent ones.</p>
-                <p>Key milestones include: Indonesia (1945), India and Pakistan (1947), Ghana (1957, first sub-Saharan African nation), Trinidad and Tobago (1962), Bangladesh (1971), the Baltic States' re-independence (1990), the Soviet dissolution creating 15 new nations (1991), and South Sudan (2011, the newest country in the world).</p>
-                <p>This project is dedicated to Faustina Warren Thomas, a Trinidadian centenarian born in February 1926 and honored by the National Centenarian Programme of Trinidad and Tobago in 2026. In her lifetime, she witnessed her own country gain independence and watched as more than half the nations on Earth were born.</p>
-                <p>Enable JavaScript to explore the interactive map with hover tooltips showing each country's independence year.</p>
-            </section>
-        </noscript>
+  <div class="map-frame">
+    <div class="map-inner">
+      <div class="loading-msg" id="loading">
+        <span class="spinner"></span> Loading the world…
+      </div>
+      <svg id="map" viewBox="0 0 1400 620" xmlns="http://www.w3.org/2000/svg" style="display:none;"></svg>
     </div>
-    </article>
-    </main>
-    <div id="tooltip"></div>
 
-    <script>
-        // ============================================================
-        // COUNTRY DATA — keyed by ISO 3166-1 NUMERIC code
-        // This matches the "id" field in world-atlas TopoJSON,
-        // eliminating all name-mismatch bugs.
-        // ============================================================
-        const countriesByISO = {
-            "368": { name: "Iraq", year: 1932 },
-            "682": { name: "Saudi Arabia", year: 1932 },
-            "422": { name: "Lebanon", year: 1943 },
-            "352": { name: "Iceland", year: 1944 },
-            "360": { name: "Indonesia", year: 1945 },
-            "400": { name: "Jordan", year: 1946 },
-            "608": { name: "Philippines", year: 1946 },
-            "760": { name: "Syria", year: 1946 },
-            "586": { name: "Pakistan", year: 1947 },
-            "356": { name: "India", year: 1947 },
-            "104": { name: "Myanmar", year: 1948 },
-            "144": { name: "Sri Lanka", year: 1948 },
-            "376": { name: "Israel", year: 1948 },
-            "408": { name: "North Korea", year: 1948 },
-            "410": { name: "South Korea", year: 1948 },
-            "434": { name: "Libya", year: 1951 },
-            "116": { name: "Cambodia", year: 1953 },
-            "418": { name: "Laos", year: 1953 },
-            "704": { name: "Vietnam", year: 1954 },
-            "729": { name: "Sudan", year: 1956 },
-            "504": { name: "Morocco", year: 1956 },
-            "788": { name: "Tunisia", year: 1956 },
-            "288": { name: "Ghana", year: 1957 },
-            "458": { name: "Malaysia", year: 1957 },
-            "324": { name: "Guinea", year: 1958 },
-            "120": { name: "Cameroon", year: 1960 },
-            "768": { name: "Togo", year: 1960 },
-            "466": { name: "Mali", year: 1960 },
-            "686": { name: "Senegal", year: 1960 },
-            "450": { name: "Madagascar", year: 1960 },
-            "180": { name: "Dem. Rep. Congo", year: 1960 },
-            "706": { name: "Somalia", year: 1960 },
-            "204": { name: "Benin", year: 1960 },
-            "854": { name: "Burkina Faso", year: 1960 },
-            "384": { name: "Côte d'Ivoire", year: 1960 },
-            "562": { name: "Niger", year: 1960 },
-            "148": { name: "Chad", year: 1960 },
-            "140": { name: "Central African Rep.", year: 1960 },
-            "178": { name: "Republic of the Congo", year: 1960 },
-            "266": { name: "Gabon", year: 1960 },
-            "196": { name: "Cyprus", year: 1960 },
-            "566": { name: "Nigeria", year: 1960 },
-            "478": { name: "Mauritania", year: 1960 },
-            "694": { name: "Sierra Leone", year: 1961 },
-            "414": { name: "Kuwait", year: 1961 },
-            "834": { name: "Tanzania", year: 1961 },
-            "882": { name: "Samoa", year: 1962 },
-            "108": { name: "Burundi", year: 1962 },
-            "646": { name: "Rwanda", year: 1962 },
-            "012": { name: "Algeria", year: 1962 },
-            "388": { name: "Jamaica", year: 1962 },
-            "780": { name: "Trinidad and Tobago", year: 1962, highlight: true },
-            "800": { name: "Uganda", year: 1962 },
-            "404": { name: "Kenya", year: 1963 },
-            "454": { name: "Malawi", year: 1964 },
-            "470": { name: "Malta", year: 1964 },
-            "894": { name: "Zambia", year: 1964 },
-            "270": { name: "Gambia", year: 1965 },
-            "702": { name: "Singapore", year: 1965 },
-            "462": { name: "Maldives", year: 1965 },
-            "328": { name: "Guyana", year: 1966 },
-            "072": { name: "Botswana", year: 1966 },
-            "426": { name: "Lesotho", year: 1966 },
-            "052": { name: "Barbados", year: 1966 },
-            "480": { name: "Mauritius", year: 1968 },
-            "748": { name: "Eswatini", year: 1968 },
-            "226": { name: "Equatorial Guinea", year: 1968 },
-            "242": { name: "Fiji", year: 1970 },
-            "776": { name: "Tonga", year: 1970 },
-            "512": { name: "Oman", year: 1970 },
-            "048": { name: "Bahrain", year: 1971 },
-            "634": { name: "Qatar", year: 1971 },
-            "784": { name: "United Arab Emirates", year: 1971 },
-            "050": { name: "Bangladesh", year: 1971 },
-            "044": { name: "Bahamas", year: 1973 },
-            "624": { name: "Guinea-Bissau", year: 1973 },
-            "308": { name: "Grenada", year: 1974 },
-            "508": { name: "Mozambique", year: 1975 },
-            "132": { name: "Cabo Verde", year: 1975 },
-            "174": { name: "Comoros", year: 1975 },
-            "678": { name: "São Tomé and Príncipe", year: 1975 },
-            "598": { name: "Papua New Guinea", year: 1975 },
-            "024": { name: "Angola", year: 1975 },
-            "740": { name: "Suriname", year: 1975 },
-            "690": { name: "Seychelles", year: 1976 },
-            "262": { name: "Djibouti", year: 1977 },
-            "090": { name: "Solomon Islands", year: 1978 },
-            "798": { name: "Tuvalu", year: 1978 },
-            "212": { name: "Dominica", year: 1978 },
-            "662": { name: "Saint Lucia", year: 1979 },
-            "296": { name: "Kiribati", year: 1979 },
-            "670": { name: "St. Vincent and the Grenadines", year: 1979 },
-            "716": { name: "Zimbabwe", year: 1980 },
-            "548": { name: "Vanuatu", year: 1980 },
-            "084": { name: "Belize", year: 1981 },
-            "028": { name: "Antigua and Barbuda", year: 1981 },
-            "659": { name: "Saint Kitts and Nevis", year: 1983 },
-            "096": { name: "Brunei", year: 1984 },
-            "520": { name: "Nauru", year: 1968 },
-            "516": { name: "Namibia", year: 1990 },
-            "440": { name: "Lithuania", year: 1990 },
-            "428": { name: "Latvia", year: 1990 },
-            "233": { name: "Estonia", year: 1990 },
-            "887": { name: "Yemen", year: 1990 },
-            "268": { name: "Georgia", year: 1991 },
-            "191": { name: "Croatia", year: 1991 },
-            "705": { name: "Slovenia", year: 1991 },
-            "804": { name: "Ukraine", year: 1991 },
-            "112": { name: "Belarus", year: 1991 },
-            "498": { name: "Moldova", year: 1991 },
-            "417": { name: "Kyrgyzstan", year: 1991 },
-            "860": { name: "Uzbekistan", year: 1991 },
-            "762": { name: "Tajikistan", year: 1991 },
-            "051": { name: "Armenia", year: 1991 },
-            "031": { name: "Azerbaijan", year: 1991 },
-            "795": { name: "Turkmenistan", year: 1991 },
-            "398": { name: "Kazakhstan", year: 1991 },
-            "584": { name: "Marshall Islands", year: 1991 },
-            "583": { name: "Micronesia", year: 1991 },
-            "070": { name: "Bosnia and Herzegovina", year: 1992 },
-            "807": { name: "North Macedonia", year: 1991 },
-            "232": { name: "Eritrea", year: 1993 },
-            "203": { name: "Czechia", year: 1993 },
-            "703": { name: "Slovakia", year: 1993 },
-            "585": { name: "Palau", year: 1994 },
-            "626": { name: "Timor-Leste", year: 2002 },
-            "499": { name: "Montenegro", year: 2006 },
-            "688": { name: "Serbia", year: 2006 },
-            "-99": { name: "Kosovo", year: 2008 },
-            "728": { name: "South Sudan", year: 2011 }
-        };
+    <div class="legend-rail">
+      <div>
+        <div class="legend-scale">Year of independence</div>
+        <div class="gradient-bar"></div>
+        <div class="gradient-labels">
+          <span>1932</span><span>1950</span><span>1970</span><span>1990</span><span>2011</span>
+        </div>
+      </div>
+      <div class="legend-swatches">
+        <span class="sw"><span class="dot dot-pre"></span>Sovereign before 1926</span>
+        <span class="sw"><span class="dot dot-trinidad"></span>Trinidad &amp; Tobago (1962)</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-        // Build lookup and compute stats
-        const isoLookup = {};
-        let totalCount = 0;
-        let mostRecentName = "";
-        let mostRecentYear = 0;
-        const decadeCounts = {};
+<section class="decades">
+  <div class="decades-head">
+    <h2>A century, decade by decade.</h2>
+    <p>The 1960s alone produced more new nations than any ten-year span in modern history — a wave of independence that swept across Africa, the Caribbean, and the Pacific.</p>
+  </div>
+  <div class="decade-grid" id="decade-grid"></div>
+</section>
 
-        Object.entries(countriesByISO).forEach(([id, info]) => {
-            isoLookup[id] = info;
-            totalCount++;
-            if (info.year > mostRecentYear) {
-                mostRecentYear = info.year;
-                mostRecentName = info.name;
-            }
-            const decade = Math.floor(info.year / 10) * 10;
-            decadeCounts[decade] = (decadeCounts[decade] || 0) + 1;
-        });
+<section class="grandma">
+  <div class="grandma-card">
+    <div class="grandma-body">
+      <h2>The Woman <em>Behind</em> the Map</h2>
+      <p>
+        This map is dedicated to my grandmother, who has seen the imaginary lines that divide societies and cultures be redrawn a multitude of times. Born in <strong>February of 1926</strong> in <strong>Trinidad and Tobago</strong>, she witnessed her home country's independence in <strong>1962</strong>.
+      </p>
+      <p>
+        Join her on the latest entry into her journey by viewing her centennial birthday party held at the <strong>Careneage Regional Community Center</strong>, Carenage, Trinidad and Tobago.
+      </p>
+      <div class="video-wrap">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/p1_o9LC24gE?rel=0&modestbranding=1"
+          title="Faustina Warren · 100th Birthday Party, Trinidad"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"></iframe>
+        <noscript>
+          <a href="https://youtu.be/p1_o9LC24gE" target="_blank" rel="noopener">Watch on YouTube</a>
+        </noscript>
+      </div>
+      <div style="margin-top:8px;font-size:12px;">
+        <a href="https://youtu.be/p1_o9LC24gE" target="_blank" rel="noopener" style="color:var(--accent-3);text-decoration:underline;text-underline-offset:3px;">Open on YouTube ↗</a>
+      </div>
+      <div class="video-caption">Celebrating 100 years · Carenage, Trinidad &amp; Tobago · February 2026</div>
+    </div>
+  </div>
+</section>
 
-        // Find peak decade
-        let peakDecade = 0, peakCount = 0;
-        Object.entries(decadeCounts).forEach(([d, c]) => {
-            if (c > peakCount) { peakCount = c; peakDecade = +d; }
-        });
+<footer class="footer">
+  <div>JTAITT WRITES · ESSAY NO. 01</div>
+  <div>BY <a href="https://jtaittw.substack.com" rel="author">JASON TAITT</a> · 2026</div>
+  <div>Data: historical independence records</div>
+</footer>
 
-        // Update stats
-        document.getElementById('country-count').textContent = totalCount;
-        document.getElementById('stat-count').textContent = totalCount;
-        document.getElementById('stat-peak').textContent = `${peakDecade}s (${peakCount})`;
-        document.getElementById('stat-recent').textContent = `${mostRecentName} (${mostRecentYear})`;
+<div id="tooltip"></div>
+<div class="mobile-info" id="mobile-info">
+  <button class="close" onclick="closeMobileInfo()">×</button>
+  <div id="mobile-info-body"></div>
+</div>
 
-        // Build decade bar chart
-        const decadeContainer = document.getElementById('decade-bars');
-        const allDecades = [];
-        for (let d = 1930; d <= 2010; d += 10) allDecades.push(d);
-        const maxDecadeCount = Math.max(...allDecades.map(d => decadeCounts[d] || 0));
+<script>
+const countriesByISO = {
+  "368":{name:"Iraq",year:1932},"682":{name:"Saudi Arabia",year:1932},
+  "422":{name:"Lebanon",year:1943},"352":{name:"Iceland",year:1944},
+  "360":{name:"Indonesia",year:1945},"400":{name:"Jordan",year:1946},
+  "608":{name:"Philippines",year:1946},"760":{name:"Syria",year:1946},
+  "586":{name:"Pakistan",year:1947},"356":{name:"India",year:1947},
+  "104":{name:"Myanmar",year:1948},"144":{name:"Sri Lanka",year:1948},
+  "376":{name:"Israel",year:1948},"408":{name:"North Korea",year:1948},
+  "410":{name:"South Korea",year:1948},"434":{name:"Libya",year:1951},
+  "116":{name:"Cambodia",year:1953},"418":{name:"Laos",year:1953},
+  "704":{name:"Vietnam",year:1954},"729":{name:"Sudan",year:1956},
+  "504":{name:"Morocco",year:1956},"788":{name:"Tunisia",year:1956},
+  "288":{name:"Ghana",year:1957},"458":{name:"Malaysia",year:1957},
+  "324":{name:"Guinea",year:1958},"120":{name:"Cameroon",year:1960},
+  "768":{name:"Togo",year:1960},"466":{name:"Mali",year:1960},
+  "686":{name:"Senegal",year:1960},"450":{name:"Madagascar",year:1960},
+  "180":{name:"Dem. Rep. Congo",year:1960},"706":{name:"Somalia",year:1960},
+  "204":{name:"Benin",year:1960},"854":{name:"Burkina Faso",year:1960},
+  "384":{name:"Côte d'Ivoire",year:1960},"562":{name:"Niger",year:1960},
+  "148":{name:"Chad",year:1960},"140":{name:"Central African Rep.",year:1960},
+  "178":{name:"Republic of the Congo",year:1960},"266":{name:"Gabon",year:1960},
+  "196":{name:"Cyprus",year:1960},"566":{name:"Nigeria",year:1960},
+  "478":{name:"Mauritania",year:1960},"694":{name:"Sierra Leone",year:1961},
+  "414":{name:"Kuwait",year:1961},"834":{name:"Tanzania",year:1961},
+  "882":{name:"Samoa",year:1962},"108":{name:"Burundi",year:1962},
+  "646":{name:"Rwanda",year:1962},"012":{name:"Algeria",year:1962},
+  "388":{name:"Jamaica",year:1962},"780":{name:"Trinidad and Tobago",year:1962,highlight:true},
+  "800":{name:"Uganda",year:1962},"404":{name:"Kenya",year:1963},
+  "454":{name:"Malawi",year:1964},"470":{name:"Malta",year:1964},
+  "894":{name:"Zambia",year:1964},"270":{name:"Gambia",year:1965},
+  "702":{name:"Singapore",year:1965},"462":{name:"Maldives",year:1965},
+  "328":{name:"Guyana",year:1966},"072":{name:"Botswana",year:1966},
+  "426":{name:"Lesotho",year:1966},"052":{name:"Barbados",year:1966},
+  "480":{name:"Mauritius",year:1968},"748":{name:"Eswatini",year:1968},
+  "226":{name:"Equatorial Guinea",year:1968},"242":{name:"Fiji",year:1970},
+  "776":{name:"Tonga",year:1970},"512":{name:"Oman",year:1970},
+  "048":{name:"Bahrain",year:1971},"634":{name:"Qatar",year:1971},
+  "784":{name:"United Arab Emirates",year:1971},"050":{name:"Bangladesh",year:1971},
+  "044":{name:"Bahamas",year:1973},"624":{name:"Guinea-Bissau",year:1973},
+  "308":{name:"Grenada",year:1974},"508":{name:"Mozambique",year:1975},
+  "132":{name:"Cabo Verde",year:1975},"174":{name:"Comoros",year:1975},
+  "678":{name:"São Tomé and Príncipe",year:1975},"598":{name:"Papua New Guinea",year:1975},
+  "024":{name:"Angola",year:1975},"740":{name:"Suriname",year:1975},
+  "690":{name:"Seychelles",year:1976},"262":{name:"Djibouti",year:1977},
+  "090":{name:"Solomon Islands",year:1978},"798":{name:"Tuvalu",year:1978},
+  "212":{name:"Dominica",year:1978},"662":{name:"Saint Lucia",year:1979},
+  "296":{name:"Kiribati",year:1979},"670":{name:"St. Vincent and the Grenadines",year:1979},
+  "716":{name:"Zimbabwe",year:1980},"548":{name:"Vanuatu",year:1980},
+  "084":{name:"Belize",year:1981},"028":{name:"Antigua and Barbuda",year:1981},
+  "659":{name:"Saint Kitts and Nevis",year:1983},"096":{name:"Brunei",year:1984},
+  "520":{name:"Nauru",year:1968},"516":{name:"Namibia",year:1990},
+  "440":{name:"Lithuania",year:1990},"428":{name:"Latvia",year:1990},
+  "233":{name:"Estonia",year:1990},"887":{name:"Yemen",year:1990},
+  "268":{name:"Georgia",year:1991},"191":{name:"Croatia",year:1991},
+  "705":{name:"Slovenia",year:1991},"804":{name:"Ukraine",year:1991},
+  "112":{name:"Belarus",year:1991},"498":{name:"Moldova",year:1991},
+  "417":{name:"Kyrgyzstan",year:1991},"860":{name:"Uzbekistan",year:1991},
+  "762":{name:"Tajikistan",year:1991},"051":{name:"Armenia",year:1991},
+  "031":{name:"Azerbaijan",year:1991},"795":{name:"Turkmenistan",year:1991},
+  "398":{name:"Kazakhstan",year:1991},"584":{name:"Marshall Islands",year:1991},
+  "583":{name:"Micronesia",year:1991},"070":{name:"Bosnia and Herzegovina",year:1992},
+  "807":{name:"North Macedonia",year:1991},"232":{name:"Eritrea",year:1993},
+  "203":{name:"Czechia",year:1993},"703":{name:"Slovakia",year:1993},
+  "585":{name:"Palau",year:1994},"626":{name:"Timor-Leste",year:2002},
+  "499":{name:"Montenegro",year:2006},"688":{name:"Serbia",year:2006},
+  "-99":{name:"Kosovo",year:2008},"728":{name:"South Sudan",year:2011}
+};
 
-        allDecades.forEach(d => {
-            const count = decadeCounts[d] || 0;
-            const pct = maxDecadeCount > 0 ? (count / maxDecadeCount) * 100 : 0;
-            const col = document.createElement('div');
-            col.className = 'decade-col';
+const decadeMeta = {
+  1930: {label:"1930s", note:"The first cracks", examples:"Iraq, Saudi Arabia"},
+  1940: {label:"1940s", note:"Empires end", examples:"India, Pakistan, Indonesia, Philippines, Israel"},
+  1950: {label:"1950s", note:"Asia sovereign", examples:"Libya, Morocco, Tunisia, Ghana, Sudan"},
+  1960: {label:"1960s", note:"The Year of Africa", examples:"Nigeria, Kenya, <span class=\"tt\">Trinidad & Tobago</span>, Jamaica, Algeria, Uganda, and 26 more"},
+  1970: {label:"1970s", note:"The Caribbean & the Pacific", examples:"Bangladesh, Angola, Mozambique, Bahamas, Fiji, Papua New Guinea"},
+  1980: {label:"1980s", note:"The last colonies", examples:"Zimbabwe, Belize, Vanuatu, Brunei"},
+  1990: {label:"1990s", note:"The Soviet unmaking", examples:"Ukraine, Kazakhstan, Namibia, Eritrea, Czechia, Slovakia, +12 post-Soviet states"},
+  2000: {label:"2000s", note:"The 21st-century births", examples:"Timor-Leste, Montenegro, Serbia, Kosovo"},
+  2010: {label:"2010s", note:"The newest nation", examples:"South Sudan"}
+};
 
-            const countEl = document.createElement('div');
-            countEl.className = 'decade-count';
-            countEl.textContent = count || '';
+const decadeCounts = {};
+Object.values(countriesByISO).forEach(info => {
+  const d = Math.floor(info.year / 10) * 10;
+  decadeCounts[d] = (decadeCounts[d] || 0) + 1;
+});
 
-            const bar = document.createElement('div');
-            bar.className = 'decade-bar';
-            bar.style.height = Math.max(pct, 2) + '%';
-            bar.style.background = getColor(d + 5);
+function getColor(year){
+  if(!year) return '#2a3a48';
+  const t = Math.max(0, Math.min(1,(year-1932)/(2011-1932)));
+  const stops = [[92,42,14],[139,58,20],[181,84,30],[212,117,46],[232,153,61],[240,190,90],[245,220,138]];
+  const seg = Math.min(Math.floor(t*(stops.length-1)), stops.length-2);
+  const lt = t*(stops.length-1) - seg;
+  const r = Math.round(stops[seg][0] + (stops[seg+1][0]-stops[seg][0])*lt);
+  const g = Math.round(stops[seg][1] + (stops[seg+1][1]-stops[seg][1])*lt);
+  const b = Math.round(stops[seg][2] + (stops[seg+1][2]-stops[seg][2])*lt);
+  return `rgb(${r},${g},${b})`;
+}
 
-            const label = document.createElement('div');
-            label.className = 'decade-label';
-            label.textContent = `${d}s`;
+const dgrid = document.getElementById('decade-grid');
+const decades = [1930,1940,1950,1960,1970,1980,1990,2000,2010];
+const maxCount = Math.max(...decades.map(d => decadeCounts[d] || 0));
+decades.forEach(d => {
+  const count = decadeCounts[d] || 0;
+  const meta = decadeMeta[d] || {};
+  const pct = (count / maxCount) * 100;
+  const row = document.createElement('div');
+  row.className = 'decade-row reveal';
+  row.innerHTML = `
+    <div class="decade-year">${meta.label}<small>${count || '—'} nations</small></div>
+    <div class="decade-visual"><div class="decade-bar" data-w="${pct}" style="background: ${getColor(d + 5)};"></div></div>
+    <div class="decade-body">
+      <div class="count">${meta.note || ''}</div>
+      <div class="examples">${meta.examples || ''}</div>
+    </div>`;
+  dgrid.appendChild(row);
+});
 
-            col.appendChild(countEl);
-            col.appendChild(bar);
-            col.appendChild(label);
-            decadeContainer.appendChild(col);
-        });
+const svg = d3.select("#map");
+const width = 1400, height = 620;
+const projection = d3.geoNaturalEarth1().scale(235).translate([width/2, height/2 + 10]);
+const path = d3.geoPath().projection(projection);
+const tooltip = d3.select("#tooltip");
 
-        // Color scale — warm amber/gold for contrast against blue ocean
-        function getColor(year) {
-            if (!year) return '#1e2d3a';
-            const minYear = 1932;
-            const maxYear = 2011;
-            const t = Math.max(0, Math.min(1, (year - minYear) / (maxYear - minYear)));
-            // Deep burnt sienna → bright gold
-            const stops = [
-                [92, 42, 14],     // dark burnt umber
-                [139, 58, 20],    // burnt sienna
-                [181, 84, 30],    // copper
-                [212, 117, 46],   // amber
-                [232, 153, 61],   // warm orange
-                [240, 190, 90],   // gold
-                [245, 220, 138]   // light gold
-            ];
-            const seg = Math.min(Math.floor(t * (stops.length - 1)), stops.length - 2);
-            const lt = (t * (stops.length - 1)) - seg;
-            const r = Math.round(stops[seg][0] + (stops[seg + 1][0] - stops[seg][0]) * lt);
-            const g = Math.round(stops[seg][1] + (stops[seg + 1][1] - stops[seg][1]) * lt);
-            const b = Math.round(stops[seg][2] + (stops[seg + 1][2] - stops[seg][2]) * lt);
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+  .then(data => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('map').style.display = 'block';
+    const countriesGeo = topojson.feature(data, data.objects.countries);
 
-        // Map setup
-        const svg = d3.select("#map");
-        const width = 1400;
-        const height = 620;
+    svg.append("rect").attr("width", width).attr("height", height).attr("fill", "transparent");
+    const graticule = d3.geoGraticule().step([20,20]);
+    svg.append("path").datum(graticule).attr("d", path)
+      .attr("fill","none").attr("stroke","rgba(255,255,255,0.035)").attr("stroke-width",0.5);
 
-        const projection = d3.geoNaturalEarth1()
-            .scale(225)
-            .translate([width / 2, height / 2 + 10]);
+    svg.selectAll(".country")
+      .data(countriesGeo.features)
+      .enter()
+      .append("path")
+      .attr("class", d => {
+        const info = countriesByISO[d.id];
+        return "country" + (info && info.highlight ? " highlight-trinidad" : "");
+      })
+      .attr("d", path)
+      .attr("fill", d => {
+        const info = countriesByISO[d.id];
+        return info ? getColor(info.year) : '#2a3a48';
+      })
+      .on("mouseover", function(e,d){ showTooltip(e,d); })
+      .on("mousemove", function(e){
+        tooltip.style("left", Math.min(e.pageX+14, window.innerWidth-260) + "px")
+               .style("top", (e.pageY-14) + "px");
+      })
+      .on("mouseout", function(){ tooltip.style("opacity",0); })
+      .on("click", function(e,d){ showMobileInfo(d); });
+  })
+  .catch(err => {
+    document.getElementById('loading').innerHTML =
+      `<div style="color:#d4a853;">Could not load the world. Please refresh.<br><small style="opacity:0.6">${err.message}</small></div>`;
+  });
 
-        const path = d3.geoPath().projection(projection);
-        const tooltip = d3.select("#tooltip");
+function showTooltip(event, d){
+  const info = countriesByISO[d.id];
+  if(info){
+    const years = info.year - 1926;
+    let extra = info.highlight ? `<div class="tt-detail">Her home island.</div>` : '';
+    tooltip.style("opacity",1).html(`
+      <div class="tt-country">${info.name}</div>
+      <div class="tt-year">INDEPENDENT · ${info.year}</div>
+      <div class="tt-detail">${years} years after her birth</div>
+      ${extra}`);
+  } else {
+    const name = d.properties.name || "Unknown";
+    tooltip.style("opacity",1).html(`
+      <div class="tt-country">${name}</div>
+      <div class="tt-pre">Sovereign before 1926</div>`);
+  }
+}
 
-        // Load and render
-        d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-            .then(data => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('map').style.display = 'block';
+function showMobileInfo(d){
+  if(window.innerWidth >= 760) return;
+  const body = document.getElementById('mobile-info-body');
+  const info = countriesByISO[d.id];
+  if(info){
+    const years = info.year - 1926;
+    body.innerHTML = `
+      <div class="tt-country">${info.name}</div>
+      <div class="tt-year">INDEPENDENT · ${info.year}</div>
+      <div class="tt-detail">${years} years after she was born${info.highlight ? ' · Her home island.' : ''}</div>`;
+  } else {
+    body.innerHTML = `
+      <div class="tt-country">${d.properties.name || 'Unknown'}</div>
+      <div class="tt-pre">Sovereign before 1926</div>`;
+  }
+  document.getElementById('mobile-info').classList.add('on');
+}
+function closeMobileInfo(){
+  document.getElementById('mobile-info').classList.remove('on');
+}
 
-                const countriesGeo = topojson.feature(data, data.objects.countries);
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      const bar = e.target.querySelector('.decade-bar');
+      if(bar){
+        const w = bar.dataset.w;
+        setTimeout(()=>{ bar.style.width = w + '%'; }, 120);
+      }
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-                // Ocean background
-                svg.append("rect")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .attr("fill", "transparent");
-
-                // Graticule
-                const graticule = d3.geoGraticule().step([20, 20]);
-                svg.append("path")
-                    .datum(graticule)
-                    .attr("d", path)
-                    .attr("fill", "none")
-                    .attr("stroke", "rgba(255,255,255,0.03)")
-                    .attr("stroke-width", 0.5);
-
-                // Country paths
-                svg.selectAll(".country")
-                    .data(countriesGeo.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", d => {
-                        const info = isoLookup[d.id];
-                        let cls = "country";
-                        if (info && info.highlight) cls += " highlight-trinidad";
-                        return cls;
-                    })
-                    .attr("d", path)
-                    .attr("fill", d => {
-                        const info = isoLookup[d.id];
-                        return info ? getColor(info.year) : '#1e2d3a';
-                    })
-                    .on("mouseover", function(event, d) {
-                        const info = isoLookup[d.id];
-                        if (info) {
-                            const yearsAfter = info.year - 1926;
-                            let extra = '';
-                            if (info.highlight) {
-                                extra = `<div style="margin-top:6px;color:#f0d48a;font-style:italic;font-size:12px;">🇹🇹 Grandma's homeland</div>`;
-                            }
-                            tooltip
-                                .style("opacity", 1)
-                                .html(`
-                                    <div class="tt-country">${info.name}</div>
-                                    <div class="tt-year">Independence: ${info.year}</div>
-                                    <div class="tt-detail">${yearsAfter} years after grandma was born</div>
-                                    ${extra}
-                                `);
-                        } else {
-                            const name = d.properties.name || "Unknown";
-                            tooltip
-                                .style("opacity", 1)
-                                .html(`
-                                    <div class="tt-country">${name}</div>
-                                    <div class="tt-pre">Independent before 1926</div>
-                                `);
-                        }
-                    })
-                    .on("mousemove", function(event) {
-                        tooltip
-                            .style("left", Math.min(event.pageX + 14, window.innerWidth - 280) + "px")
-                            .style("top", (event.pageY - 14) + "px");
-                    })
-                    .on("mouseout", function() {
-                        tooltip.style("opacity", 0);
-                    });
-
-                // Trinidad annotation arrow
-                const trinidadCoords = projection([-61.25, 10.45]);
-                if (trinidadCoords) {
-                    const annoGroup = svg.append("g").attr("class", "trinidad-annotation");
-                    const tx = trinidadCoords[0];
-                    const ty = trinidadCoords[1];
-                    // Draw a line from label to country
-                    annoGroup.append("line")
-                        .attr("x1", tx + 30).attr("y1", ty - 35)
-                        .attr("x2", tx + 5).attr("y2", ty - 5);
-                    annoGroup.append("text")
-                        .attr("x", tx + 32).attr("y", ty - 40)
-                        .text("Trinidad & Tobago, 1962");
-                }
-            })
-            .catch(err => {
-                document.getElementById('loading').innerHTML =
-                    `<div class="error-msg">Unable to load map data. Please check your connection and refresh.<br><small>${err.message}</small></div>`;
-            });
-    </script>
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
 </body>
 </html>
