@@ -9,7 +9,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;50[...] 
+
 
 <style>
   :root {
@@ -47,7 +48,7 @@
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/></filter><rect width='100%' height='100%' fill='%23f5efe6' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves[...] 
     pointer-events: none;
     z-index: 9999;
     mix-blend-mode: multiply;
@@ -552,7 +553,7 @@
     <div class="grandma-body">
       <h2>The Woman <em>Behind</em> the Map</h2>
       <p>
-        This map is dedicated to my grandmother, who has seen the imaginary lines that divide societies and cultures be redrawn a multitude of times. Born in <strong>February of 1926</strong> in [...]
+        This map is dedicated to my grandmother, who has seen the imaginary lines that divide societies and cultures be redrawn a multitude of times. Born in <strong>February of 1926</strong> in Trinidad and Tobago.
       </p>
       <p>
         Join her on the latest entry into her journey by viewing her centennial birthday party held at the <strong>Careneage Regional Community Center</strong>, Carenage, Trinidad and Tobago.
@@ -578,7 +579,7 @@
 </section>
 
 <footer class="footer">
-  <div>JTAITT WRITES · ESSAY NO. 01</div>
+  <div><a href="https://jtaittw.substack.com/" rel="author">JTAITT WRITES</a> · ESSAY NO. 01</div>
   <div>BY <a href="https://jtaittw.substack.com" rel="author">JASON TAITT</a> · 2026</div>
   <div>Data: historical independence records</div>
 </footer>
@@ -706,152 +707,9 @@ decades.forEach(d => {
   row.innerHTML = `
     <div class="decade-year">${meta.label}<small>${count || '—'} nations</small></div>
     <div class="decade-visual"><div class="decade-bar" data-w="${pct}" style="background: ${getColor(d + 5)};"></div></div>
-    <div class="decade-body">
-      <div class="count">${meta.note || ''}</div>
-      <div class="examples">${meta.examples || ''}</div>
-    </div>`;
+  `;
   dgrid.appendChild(row);
 });
-
-/* Map rendering (responsive + pointer events + transform tooltip) */
-const svg = d3.select("#map");
-const tooltip = d3.select("#tooltip");
-let currentTopoData = null;
-
-function showTooltipContent(d){
-  const info = countriesByISO[d.id];
-  if(info){
-    const years = info.year - 1926;
-    const extra = info.highlight ? `<div class="tt-detail">Her home island.</div>` : '';
-    tooltip.html(`
-      <div class="tt-country">${info.name}</div>
-      <div class="tt-year">INDEPENDENT · ${info.year}</div>
-      <div class="tt-detail">${years} years after her birth</div>
-      ${extra}`);
-  } else {
-    const name = d.properties && d.properties.name ? d.properties.name : "Unknown";
-    tooltip.html(`
-      <div class="tt-country">${name}</div>
-      <div class="tt-pre">Sovereign before 1926</div>`);
-  }
-}
-
-function showMobileInfo(d){
-  if(window.innerWidth >= 760) return;
-  const body = document.getElementById('mobile-info-body');
-  const info = countriesByISO[d.id];
-  if(info){
-    const years = info.year - 1926;
-    body.innerHTML = `
-      <div class="tt-country">${info.name}</div>
-      <div class="tt-year">INDEPENDENT · ${info.year}</div>
-      <div class="tt-detail">${years} years after she was born${info.highlight ? ' · Her home island.' : ''}</div>`;
-  } else {
-    body.innerHTML = `
-      <div class="tt-country">${d.properties && d.properties.name ? d.properties.name : 'Unknown'}</div>
-      <div class="tt-pre">Sovereign before 1926</div>`;
-  }
-  document.getElementById('mobile-info').classList.add('on');
-}
-function closeMobileInfo(){
-  document.getElementById('mobile-info').classList.remove('on');
-}
-
-function renderMap(topoData){
-  currentTopoData = topoData;
-  svg.selectAll("*").remove();
-
-  // compute size from rendered width for proper scaling
-  const mapEl = document.getElementById('map');
-  const bbox = mapEl.getBoundingClientRect();
-  const width = Math.max(320, Math.round(bbox.width || 1400));
-  const height = Math.round(width * (620/1400));
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-
-  const projection = d3.geoNaturalEarth1().scale(width * 0.1675).translate([width/2, height/2 + 10]);
-  const path = d3.geoPath().projection(projection);
-
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('map').style.display = 'block';
-
-  const countriesGeo = topojson.feature(topoData, topoData.objects.countries);
-
-  svg.append("rect").attr("width", width).attr("height", height).attr("fill", "transparent");
-  const graticule = d3.geoGraticule().step([20,20]);
-  svg.append("path").datum(graticule).attr("d", path)
-    .attr("fill","none").attr("stroke","rgba(255,255,255,0.035)").attr("stroke-width",0.5);
-
-  // country shapes
-  svg.selectAll(".country")
-    .data(countriesGeo.features)
-    .enter()
-    .append("path")
-    .attr("class", d => {
-      const info = countriesByISO[d.id];
-      return "country" + (info && info.highlight ? " highlight-trinidad" : "");
-    })
-    .attr("d", path)
-    .attr("fill", d => {
-      const info = countriesByISO[d.id];
-      return info ? getColor(info.year) : '#2a3a48';
-    })
-    .on("pointerover", function(event, d){
-      showTooltipContent(d);
-      tooltip.style("opacity",1);
-    })
-    .on("pointermove", function(event){
-      // use client coordinates for fixed-position tooltip, clamp to viewport
-      const x = Math.min(event.clientX + 14, window.innerWidth - 260);
-      const y = Math.max(8, event.clientY - 14);
-      tooltip.style("transform", `translate3d(${x}px, ${y}px, 0)`);
-    })
-    .on("pointerout", function(){ tooltip.style("opacity",0); })
-    .on("click", function(event, d){ showMobileInfo(d); });
-
-  // add aria labels for accessibility
-  svg.selectAll("path.country").attr("role", "img")
-    .attr("aria-label", d => {
-      const info = countriesByISO[d.id];
-      return info ? `${info.name} — independent ${info.year}` : (d.properties && d.properties.name ? d.properties.name : 'Country');
-    });
-}
-
-/* debounce helper */
-function debounce(fn, wait){
-  let t;
-  return function(...args){
-    clearTimeout(t);
-    t = setTimeout(()=> fn.apply(this, args), wait);
-  };
-}
-
-/* load topojson and render; re-render on resize (debounced) */
-d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-  .then(topo => {
-    renderMap(topo);
-    window.addEventListener('resize', debounce(()=> renderMap(topo), 200));
-  })
-  .catch(err => {
-    document.getElementById('loading').innerHTML =
-      `<div style="color:#d4a853;">Could not load the world. Please refresh.<br><small style="opacity:0.6">${err.message}</small></div>`;
-  });
-
-/* reveal animation for decades (unchanged) */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){
-      e.target.classList.add('in');
-      const bar = e.target.querySelector('.decade-bar');
-      if(bar){
-        const w = bar.dataset.w;
-        setTimeout(()=>{ bar.style.width = w + '%'; }, 120);
-      }
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 </body>
 </html>
